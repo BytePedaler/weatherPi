@@ -29,12 +29,16 @@ with open('wptestfile.csv', 'a', newline='') as csvfile:
 def data_write():
     with open('wptestfile.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-        writer.writerow([localtime(), current_temp, current_pressure, current_humidity, current_light, gas_readings, part_mat_readings])
+        writer.writerow([time_recording(), current_temp, current_pressure, current_humidity, current_light, gas_readings, part_mat_readings])
         # NEED TO CLOSE CSV FILE WHEN FINISHED WRITING EACH TIME
 
 def time_interval():
-     min_interval = SECONDS_PER_MINUTE * 0.1
+     min_interval = SECONDS_PER_MINUTE * 0.016667
      return min_interval
+
+def time_recording():
+    current_time = strftime("%Y, %m, %d, %H, %M, %S", localtime())
+    return current_time
 
 def sensor_readings():
     print("Current temperature: " + str(current_temp))
@@ -47,11 +51,16 @@ def sensor_readings():
 def sensor_acquisition():
     while True:
         # Temp for testing:
-        sensor_readings()
+        # sensor_readings()
 
-        # Time:
-        print(localtime())
-        data_write()
+        sensor_timer = strftime("%S", localtime())
+        # print("Current timer: " + sensor_timer)
+        if sensor_timer == "00":
+            print(time_recording())
+            data_write()
+        elif sensor_timer == "30":
+            print(time_recording())
+            data_write()
         sleep(time_interval())
 
 
