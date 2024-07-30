@@ -7,6 +7,8 @@ from pms5003 import PMS5003
 
 # Const:
 SECONDS_PER_MINUTE = 60
+
+# Sensors:
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 ltr = LTR559()
