@@ -1,4 +1,4 @@
-import time
+from time import localtime, strftime, sleep
 import csv
 from smbus2 import SMBus
 from bme280 import BME280
@@ -29,7 +29,7 @@ with open('wptestfile.csv', 'a', newline='') as csvfile:
 def data_write():
     with open('wptestfile.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-        writer.writerow([time.localtime(), current_temp, current_pressure, current_humidity, current_light, gas_readings, part_mat_readings])
+        writer.writerow([localtime(), current_temp, current_pressure, current_humidity, current_light, gas_readings, part_mat_readings])
         # NEED TO CLOSE CSV FILE WHEN FINISHED WRITING EACH TIME
 
 def time_interval():
@@ -44,16 +44,15 @@ def sensor_readings():
     print("Current gas: " + str(gas_readings))
     print("Current particulates: " + str(part_mat_readings))
 
-
 def sensor_acquisition():
     while True:
-        # Temp comment for testing:
+        # Temp for testing:
         sensor_readings()
 
         # Time:
-        print(time.localtime())
+        print(localtime())
         data_write()
-        time.sleep(time_interval())
+        sleep(time_interval())
 
 
 if __name__ == '__main__':
