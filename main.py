@@ -24,13 +24,14 @@ part_mat_readings = pms5003.read()
 # File initialization:
 with open('wptestfile.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(['downtime'])
+    writer.writerow(['system downtime'])
+    csvfile.close()
 
 def data_write():
     with open('wptestfile.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
         writer.writerow([time_recording(), current_temp, current_pressure, current_humidity, current_light, gas_readings, part_mat_readings])
-        # NEED TO CLOSE CSV FILE WHEN FINISHED WRITING EACH TIME
+        csvfile.close()
 
 def time_interval():
      min_interval = SECONDS_PER_MINUTE * 0.016667
@@ -41,6 +42,7 @@ def time_recording():
     return current_time
 
 def sensor_readings():
+    print("Current sensor readings for debugging and testing: ")
     print("Current temperature: " + str(current_temp))
     print("Current pressure: " + str(current_pressure))
     print("Current humidity: " + str(current_humidity))
@@ -50,17 +52,16 @@ def sensor_readings():
 
 def sensor_acquisition():
     while True:
-        # Temp for testing:
-        # sensor_readings()
-
         sensor_timer = strftime("%S", localtime())
         # print("Current timer: " + sensor_timer)
         if sensor_timer == "00":
-            print(time_recording())
+            print("Data written at: " + time_recording())
             data_write()
+            sensor_readings()
         elif sensor_timer == "30":
-            print(time_recording())
+            print("Data written at: " + time_recording())
             data_write()
+            sensor_readings()
         sleep(time_interval())
 
 
