@@ -33,6 +33,7 @@ def sensor_readings():
     print("Current gas: " + str(gas_readings))
     print("Current particulates: " + str(part_mat_readings))
 
+
 def sensor_acquisition():
     while True:
         sensor_readings()
