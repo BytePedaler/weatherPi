@@ -3,7 +3,7 @@ import csv
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
-# from enviroplus import gas
+from enviroplus import gas
 from pms5003 import PMS5003
 
 # Const:
@@ -19,8 +19,9 @@ converted_temp = ((float(current_temp) * 9/5) + 32)
 current_pressure = bme280.get_pressure()
 current_humidity = bme280.get_humidity()
 current_light = ltr.get_lux()
-# gas_readings = gas.read_all()
-part_mat_readings = pms5003.read()
+gas_readings = gas.read_all()
+part_mat_readings_raw = pms5003.read()
+part_mat_readings = str(part_mat_readings_raw).strip()
 
 # File initialization:
 with open('wptestfile.csv', 'a', newline='') as csvfile:
