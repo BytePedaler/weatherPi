@@ -48,7 +48,7 @@ def sensor_readings():
     print("Current pressure: " + str(current_pressure))
     print("Current humidity: " + str(current_humidity))
     print("Current light level: " + str(current_light))
-    print("Current gas: " + str(gas_readings))
+    # print("Current gas: " + str(gas_readings))
     print("Current particulates: " + str(part_mat_readings))
 
 def sensor_acquisition():
