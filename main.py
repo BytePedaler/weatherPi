@@ -3,8 +3,10 @@ import csv
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
-from enviroplus import gas
+# import gas
+# gas.path.append("/home/allbeejm/enviroplus-python/enviroplus/gas.py")
 from pms5003 import PMS5003
+
 
 # Const:
 SECONDS_PER_MINUTE = 60
@@ -15,10 +17,11 @@ bme280 = BME280(i2c_dev=bus)
 ltr = LTR559()
 pms5003 = PMS5003()
 current_temp = bme280.get_temperature()
+converted_temp = (float(current_temp * 9/5) + 32)
 current_pressure = bme280.get_pressure()
 current_humidity = bme280.get_humidity()
 current_light = ltr.get_lux()
-gas_readings = gas.read_all()
+# gas_readings = gas.read_all()
 part_mat_readings = pms5003.read()
 
 # File initialization:
@@ -30,7 +33,7 @@ with open('wptestfile.csv', 'a', newline='') as csvfile:
 def data_write():
     with open('wptestfile.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-        writer.writerow([time_recording(), current_temp, current_pressure, current_humidity, current_light, gas_readings, part_mat_readings])
+        writer.writerow(["New Data: ", time_recording(), current_temp, converted_temp, current_pressure, current_humidity, current_light, part_mat_readings])
         csvfile.close()
 
 def time_interval():
@@ -47,7 +50,7 @@ def sensor_readings():
     print("Current pressure: " + str(current_pressure))
     print("Current humidity: " + str(current_humidity))
     print("Current light level: " + str(current_light))
-    print("Current gas: " + str(gas_readings))
+    # print("Current gas: " + str(gas_readings))
     print("Current particulates: " + str(part_mat_readings))
 
 def sensor_acquisition():
@@ -55,13 +58,13 @@ def sensor_acquisition():
         sensor_timer = strftime("%S", localtime())
         # print("Current timer: " + sensor_timer)
         if sensor_timer == "00":
-            print("Data written at: " + time_recording())
+            # print("Data written at: " + time_recording())
             data_write()
-            sensor_readings()
+            # sensor_readings()
         elif sensor_timer == "30":
-            print("Data written at: " + time_recording())
+            # print("Data written at: " + time_recording())
             data_write()
-            sensor_readings()
+            # sensor_readings()
         sleep(time_interval())
 
 
