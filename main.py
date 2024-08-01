@@ -47,8 +47,11 @@ def data_write():
         csvfile.close()
 
 def time_interval():
-     min_interval = SECONDS_PER_MINUTE * 0.016667
-     return min_interval
+    # Debug time interval:
+    # min_interval = SECONDS_PER_MINUTE * 0.016667
+    # Real world Collection interval:
+    min_interval = SECONDS_PER_MINUTE * 1
+    return min_interval
 
 def time_recording():
     current_time = strftime("%Y, %m, %d, %H, %M, %S", localtime())
@@ -65,7 +68,10 @@ def sensor_readings():
 
 def sensor_acquisition():
     while True:
-        sensor_timer = strftime("%S", localtime())
+        # Debug time:
+        # sensor_timer = strftime("%S", localtime())
+        # Real world collection time:
+        sensor_timer = strftime("%M", localtime())
         # print("Current timer: " + sensor_timer)
         if sensor_timer == "00":
             # print("Data written at: " + time_recording())
