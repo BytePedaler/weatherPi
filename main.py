@@ -3,7 +3,7 @@ import csv
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
-from enviroplus import gas
+import gas
 from pms5003 import PMS5003
 
 # Const:
@@ -21,7 +21,18 @@ current_humidity = bme280.get_humidity()
 current_light = ltr.get_lux()
 gas_readings = gas.read_all()
 part_mat_readings_raw = pms5003.read()
-part_mat_readings = str(part_mat_readings_raw).strip()
+part_mat_readings = str(part_mat_readings_raw)
+
+# Particulate sensor data:
+def pm_data():
+    pm_readings = []
+    msm_data_lines = part_mat_readings.split('\n')
+    for line in msm_data_lines:
+        parts = line.split(":")
+        if len(parts) > 1:
+            measurement = parts[1].strip()
+            pm_readings.append(measurement)
+    return(pm_readings)
 
 # File initialization:
 with open('wptestfile.csv', 'a', newline='') as csvfile:
@@ -32,7 +43,7 @@ with open('wptestfile.csv', 'a', newline='') as csvfile:
 def data_write():
     with open('wptestfile.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-        writer.writerow(["New Data: ", time_recording(), current_temp, converted_temp, current_pressure, current_humidity, current_light, part_mat_readings])
+        writer.writerow(["New Data: ", time_recording(), current_temp, converted_temp, current_pressure, current_humidity, current_light, pm_data()])
         csvfile.close()
 
 def time_interval():
