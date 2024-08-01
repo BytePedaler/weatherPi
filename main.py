@@ -19,7 +19,7 @@ converted_temp = ((float(current_temp) * 9/5) + 32)
 current_pressure = bme280.get_pressure()
 current_humidity = bme280.get_humidity()
 current_light = ltr.get_lux()
-gas_readings = gas.read_all()
+# gas_readings = gas.read_all()
 part_mat_readings_raw = pms5003.read()
 part_mat_readings = str(part_mat_readings_raw)
 
