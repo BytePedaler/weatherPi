@@ -10,6 +10,5 @@ Current terminal initialization procedure:
 4. python3 main.py
 
 Upcoming updates:
-1. Fix for particulate sensor readings
-2. Fix for gas sensor (currently not reading at all)
-3. Cleaner data presentation in CSV
+1. Fix for gas sensor (currently not outputting correctly)
+2. Cleaner data presentation in CSV
