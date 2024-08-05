@@ -7,10 +7,13 @@ from ltr559 import LTR559
 # import gas
 from pms5003 import PMS5003
 
+
+# Mode selection:
+# Normal = 0, Debug = 1
+MODE = 0
+
 # Const:
 SECONDS_PER_MINUTE = 60
-# For debugging only:
-# SECONDS_PER_MINUTE = 0.016667
 
 # Sensor initialization:
 bus = SMBus(1)
@@ -22,6 +25,13 @@ pms5003 = PMS5003()
 
 def initialization():
     print("Running Weather Pi")
+    print("Please remember that the first set of data recorded may be erroneous.")
+    print("The sensors often need a few minutes to acclimate!")
+    if MODE == 1:
+        print("WARNING: DEBUG MODE CURRENTLY ACTIVE")
+    elif MODE == 0:
+        pass
+
 
 # Particulate sensor data:
 def pm_data():
@@ -42,14 +52,14 @@ def temp_data():
     pressure_readings = []
     humidity_readings = []
     light_readings = []
-    for i in range(10):
+    for i in range(20):
         current_temp = bme280.get_temperature()
-        current_pressure = bme280.get_pressure()
-        current_humidity = bme280.get_humidity()
-        current_light = ltr.get_lux()
         temp_readings.append(current_temp)
+        current_pressure = bme280.get_pressure()
         pressure_readings.append(current_pressure)
+        current_humidity = bme280.get_humidity()
         humidity_readings.append(current_humidity)
+        current_light = ltr.get_lux()
         light_readings.append(current_light)
         # print(len(temp_readings))
     # print(len(temp_readings))
@@ -75,53 +85,58 @@ def data_write():
         csvfile.close()
 
 def time_interval():
-    # Debug time interval:
-    # min_interval = SECONDS_PER_MINUTE * 0.016667
-    # Real world Collection interval:
-    min_interval = SECONDS_PER_MINUTE * 1
-    return min_interval
+    if MODE == 0:
+        # Real world Collection interval:
+        min_interval = SECONDS_PER_MINUTE * 1
+        return min_interval
+    elif MODE == 1:
+        # Debug time interval:
+        min_interval = SECONDS_PER_MINUTE * 0.016667
+        return min_interval
 
 def time_recording():
     current_time = strftime("%Y, %m, %d, %H, %M, %S", localtime())
     return current_time
 
-# def sensor_readings():
-#     print("Current sensor readings for debugging and testing: ")
-#     print("Current temperature: " + str(current_temp))
-#     print("Current pressure: " + str(current_pressure))
-#     print("Current humidity: " + str(current_humidity))
-#     print("Current light level: " + str(current_light))
-#     print("Current gas: " + str(gas_readings))
-#     print("Current particulates: " + str(part_mat_readings))
+def sensor_readings():
+    if MODE == 0:
+        pass
+    elif MODE == 1:
+        print("Current sensor readings for debugging and testing: ")
+        print("Current temperature: " + str(temp_data()))
+        # print("Current gas: " + str(gas_readings))
+        print("Current particulates: " + str(pm_data()))
+        print("Data written at: " + time_recording())
+
+def sensor_acq_mode():
+    if MODE == 0:
+        acq_mode = "%M"
+        return acq_mode
+    elif MODE == 1:
+        acq_mode = "%S"
+        return acq_mode
 
 def sensor_acquisition():
     while True:
         temp_data()
-        # Debug time:
-        # sensor_timer = strftime("%S", localtime())
         # Real world collection time:
-        sensor_timer = strftime("%M", localtime())
-        # print("Current timer: " + sensor_timer)
+        sensor_timer = strftime(sensor_acq_mode(), localtime())
         if sensor_timer == "00":
-            # print("Data written at: " + time_recording())
             data_write()
-            # sensor_readings()
-            time.sleep(60)
+            sensor_readings()
+            sleep(time_interval())
         elif sensor_timer == "15":
-            # print("Data written at: " + time_recording())
             data_write()
-            # sensor_readings()
-            time.sleep(60)
+            sensor_readings()
+            sleep(time_interval())
         elif sensor_timer == "30":
-            # print("Data written at: " + time_recording())
             data_write()
-            # sensor_readings()
-            time.sleep(60)
+            sensor_readings()
+            sleep(time_interval())
         elif sensor_timer == "45":
-            # print("Data written at: " + time_recording())
             data_write()
-            # sensor_readings()
-            time.sleep(60)
+            sensor_readings()
+            sleep(time_interval())
         sleep(time_interval())
 
 
