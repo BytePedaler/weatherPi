@@ -118,18 +118,17 @@ def sensor_acquisition():
     while True:
         sensor_timer = strftime(sensor_acq_mode(), localtime()) # Real world collection time
         if sensor_timer == "00":
-            data_write()
             sensor_readings()
+            data_write()
         elif sensor_timer == "15":
-            data_write()
             sensor_readings()
+            data_write()
         elif sensor_timer == "30":
-            data_write()
             sensor_readings()
+            data_write()
         elif sensor_timer == "45":
-            data_write()
             sensor_readings()
-        sleep(time_interval())
+            data_write()
 
 
 # Debug mode only:
