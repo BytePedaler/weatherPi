@@ -1,7 +1,6 @@
 from time import localtime, strftime, sleep
 
 SECONDS_PER_MINUTE = 60
-switch_status = 0
 
 def time_interval():
     min_interval = SECONDS_PER_MINUTE * 0.016667
@@ -13,25 +12,19 @@ def time_recording():
 
 def sensor_acquisition():
     while True:
+        switch_status = 0
         sensor_timer = strftime("%S", localtime())
         # print("Current timer: " + sensor_timer)
         if sensor_timer == "00":
-            func_switch()
+            switch_status = 0
             print(time_recording())
-            print(func_switch())
+            print(switch_status)
         elif sensor_timer == "30":
-            func_switch()
+            switch_status = 1
             print(time_recording())
-            print(func_switch())
+            print(switch_status)
         sleep(time_interval())
 
-def func_switch():
-    if switch_status == 0:
-        switch_status = 1
-        return switch_status
-    else:
-        switch_status = 0
-        return switch_status
 
 def main():
     sensor_acquisition()
