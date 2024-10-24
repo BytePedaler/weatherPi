@@ -3,6 +3,7 @@ import time
 import csv
 
 file_switch_status = 1
+last_write_time = None
 
 # Mode selection:
 # Normal = 0, Debug = 1
@@ -34,23 +35,20 @@ def sensor_acq_mode():
         acq_mode = "%S"
         return acq_mode
 
+
 def sensor_acquisition():
-    sensor_timer = strftime(sensor_acq_mode(), localtime()) # Real world collection time
-    if sensor_timer == "00":
-        dataAcquisition()
-        # data_write()
-    elif sensor_timer == "15":
-        dataAcquisition()
-        # data_write()
-    elif sensor_timer == "30":
-        dataAcquisition()
-        # data_write()
-    elif sensor_timer == "45":
-        dataAcquisition()
-        # data_write()
+    # Continuous sensor acquisition
+    current_second = int(strftime(sensor_acq_mode(), localtime()))  # Get the current second
+    trigger_interval = 15  # Define the interval for triggering data write (e.g., every 15 seconds)
 
+    global last_write_time  # Use the global variable to track the last write time
 
-# New code below:
+    # Check if it's time to write data (every 15 seconds) and ensure no repeated writes within the same second
+    if current_second % trigger_interval == 0 and last_write_time != current_second:
+        dataAcquisition()
+        last_write_time = current_second  # Update last write time to the current second
+
+# Code barrier for implementation changes: DO NOT REMOVE.
 
 
 
@@ -66,18 +64,17 @@ def dataWriteFile2():
         writer.writerow(["New Data: ", time_recording(), "Test file 2"])
         csvfile.close()
 
+
 def dataAcquisition():
-    time_multiplier = (int(time_interval()) * 15)
+    global file_switch_status
+    print(file_switch_status)
+
     if file_switch_status == 1:
-        print(file_switch_status)
-        FILE_SWITCH = file_switch_status - 1
         dataWriteFile1()
+        file_switch_status = 0
     else:
-        print(file_switch_status)
-        FILE_SWITCH = file_switch_status + 1
         dataWriteFile2()
-
-
+        file_switch_status = 1
 
 if __name__ == '__main__':
     while True:
