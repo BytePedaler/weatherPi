@@ -1,6 +1,7 @@
 from time import localtime, strftime, sleep
 import time
 import csv
+import socket
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
@@ -26,6 +27,9 @@ light_readings = []
 file_switch_status = 1
 last_write_time = None
 
+# Get device name for data output
+current_device_name = socket.gethostname()
+
 # Sensor initialization:
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
@@ -46,6 +50,7 @@ with open('wp_data_2.csv', 'a', newline='') as csvfile:
 
 def initialization():
     print("Running Weather Pi")
+    print("Currently running on " + current_device_name)
     print("Please remember that the first set of data recorded may be erroneous.")
     print("The sensors often need a few minutes to acclimate!")
     if MODE == 1:
@@ -112,14 +117,14 @@ def sens_data():
     if file_switch_status == 1:
         with open('wp_data_1.csv', 'a', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-            writer.writerow(["New Data: ", time_recording(), avg_temp_reading, converted_temp, avg_humidity_reading,
+            writer.writerow(["New Data: ", time_recording(), current_device_name, avg_temp_reading, converted_temp, avg_humidity_reading,
                              avg_pressure_reading, avg_light_reading, pm_sensor()])
             csvfile.close()
         file_switch_status = 0
     else:
         with open('wp_data_2.csv', 'a', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-            writer.writerow(["New Data: ", time_recording(), avg_temp_reading, converted_temp, avg_humidity_reading,
+            writer.writerow(["New Data: ", time_recording(), current_device_name, avg_temp_reading, converted_temp, avg_humidity_reading,
                              avg_pressure_reading, avg_light_reading, pm_sensor()])
             csvfile.close()
         file_switch_status = 1
