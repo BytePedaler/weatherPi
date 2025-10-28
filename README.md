@@ -32,6 +32,16 @@ Current terminal initialization procedure:
 4. (Optional): Check status of service:
     sudo systemctl status weatherpi.service
 
+5. To enable auto-update from GitHub Repo:
+    chmod +x ~/weatherPi/update.sh
+
+    Then open your crontab:
+        crontab -e
+
+    Then add this line:
+        0 * * * * /home/$USER/weatherPi/update.sh
+
+
 
 Upcoming updates:
 1. Fix for gas sensor (currently not outputting correctly).
