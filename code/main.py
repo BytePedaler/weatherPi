@@ -22,7 +22,7 @@ SECONDS_PER_MINUTE = 60
 TRIGGER_INTERVAL = 15
 
 # Detect directories dynamically
-BASE_DIR = path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 LOG_FILE = BASE_DIR / "weatherPi.log"
 DATA_DIR.mkdir(exist_ok=True)
