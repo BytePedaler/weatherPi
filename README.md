@@ -8,6 +8,16 @@ Currently, the focus is primarily on weather trends in the downtown
 Portland, Oregon area.
 
 Current terminal initialization procedure:
+0. Install prerequisite services:
+git clone https://github.com/pimoroni/enviroplus-python
+cd enviroplus-python
+./install.sh
+
+git clone https://github.com/pimoroni/pms5003-python
+cd pms5003-python
+./install.sh
+
+[may need to include BME280, still testing this to make sure though]
 1. Create systemd service:
 sudo nano /etc/systemd/system/weatherpi.service
 2. systemd input:
