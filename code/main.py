@@ -25,14 +25,14 @@ LOG_FILE = BASE_DIR / "weatherPi.log"
 DATA_DIR.mkdir(exist_ok=True)
 
 # Get device name for data output
-current_device_name = socket.gethostname()
+DEVICE_NAME = socket.gethostname()
 
 
 # /////////////  
 # Config, etc (either obsolete or on its way out)
 # \\\\\\\\\\\\\
 # Get user name for data output (this is to ensure the correct filepath for the data saves) -- mostly obsolete
-current_username = os.getlogin()
+USERNAME = os.getlogin()
 
 # Define the interval for triggering data write (e.g., every 15 seconds)
 trigger_interval = 15
@@ -47,6 +47,17 @@ light_readings = []
 file_switch_status = 1
 last_write_time = None
 
+# File initialization:
+with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['system downtime'])
+    csvfile.close()
+
+with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['system downtime'])
+    csvfile.close()
+
 
 # /////////////  
 # Init
@@ -58,16 +69,10 @@ ltr = LTR559()
 pms5003 = PMS5003()
 # gas_readings = gas.read_all() # still in testing
 
-# File initialization:
-with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['system downtime'])
-    csvfile.close()
-
-with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['system downtime'])
-    csvfile.close()
+def log(msg):
+    """Log messages to file with timestamp."""
+    with open(LOG_FILE, "a") as log_file:
+        log_file.write(f"[{strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
 
 def initialization():
     print("Running Weather Pi")
