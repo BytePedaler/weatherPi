@@ -36,8 +36,7 @@ DEVICE_NAME = socket.gethostname()
 # Config, etc (either obsolete or on its way out)
 # \\\\\\\\\\\\\
 # Get user name for data output (this is to ensure the correct filepath for the data saves) -- mostly obsolete
-USERNAME = os.getlogin()
-
+# USERNAME = os.getlogin()
 
 # Const variables:
 temp_readings = []
@@ -48,17 +47,6 @@ light_readings = []
 # Additional variables:
 file_switch_status = 1
 last_write_time = None
-
-# File initialization:
-with open('/home/' + USERNAME + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['system downtime'])
-    csvfile.close()
-
-with open('/home/' + USERNAME + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['system downtime'])
-    csvfile.close()
 
 
 
