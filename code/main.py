@@ -11,12 +11,15 @@ from ltr559 import LTR559
 from pms5003 import PMS5003
 
 
-# /////////////  
+
+# /////////////
 # Config
 # \\\\\\\\\\\\\
 # Mode selection:
 MODE = 0 # Normal = 0, Debug = 1
 SECONDS_PER_MINUTE = 60
+# Define the interval for triggering data write (e.g., every 15 seconds)
+TRIGGER_INTERVAL = 15
 
 # Detect directories dynamically
 BASE_DIR = path(__file__).resolve().parent.parent
@@ -28,14 +31,13 @@ DATA_DIR.mkdir(exist_ok=True)
 DEVICE_NAME = socket.gethostname()
 
 
-# /////////////  
+
+# /////////////
 # Config, etc (either obsolete or on its way out)
 # \\\\\\\\\\\\\
 # Get user name for data output (this is to ensure the correct filepath for the data saves) -- mostly obsolete
 USERNAME = os.getlogin()
 
-# Define the interval for triggering data write (e.g., every 15 seconds)
-trigger_interval = 15
 
 # Const variables:
 temp_readings = []
@@ -59,7 +61,8 @@ with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', ne
     csvfile.close()
 
 
-# /////////////  
+
+# /////////////
 # Init
 # \\\\\\\\\\\\\
 # Sensor initialization:
@@ -76,141 +79,94 @@ def log(msg):
 
 def initialization():
     print("Running Weather Pi")
-    print("Currently running on " + current_device_name)
-    print("Please remember that the first set of data recorded may be erroneous.")
-    print("The sensors often need a few minutes to acclimate!")
+    print(f"Currently running on {DEVICE_NAME}")
+    print("Please remember that the first set of data recorded may be erroneous. The sensors often need a few minutes to acclimate!")
     if MODE == 1:
         print("WARNING: DEBUG MODE CURRENTLY ACTIVE")
     elif MODE == 0:
         pass
 
-def sensor_acq_mode():
-    if MODE == 0:
-        acq_mode = "%M"
-        return acq_mode
-    elif MODE == 1:
-        acq_mode = "%S"
-        return acq_mode
 
 
+# /////////////
+# Sensor Reading
+# \\\\\\\\\\\\\
 # Time recording and collection:
-def time_interval():
-    if MODE == 0:
-        # Real world Collection interval:
-        min_interval = SECONDS_PER_MINUTE * 1
-        return min_interval
-    elif MODE == 1:
-        # Debug time interval:
-        min_interval = 1
-        return min_interval
-
 def time_recording():
-    current_time = strftime("%Y, %m, %d; %H:%M:%S", localtime())
-    return current_time
+    return strftime("%Y, %m, %d; %H:%M:%S", localtime())
 
+def time_interval():
+    return SECONDS_PER_MINUTE if MODE == 0 else 1
 
 # Sensor data collection:
-def sens_data():
-    global file_switch_status
-    time_multiplier = (int(time_interval()) * 15)
-    global temp_readings
-    global humidity_readings
-    global pressure_readings
-    global light_readings
-    temp_readings.clear()
-    humidity_readings.clear()
-    pressure_readings.clear()
-    light_readings.clear()
-    for i in range(time_multiplier - 1):
-        current_temp = bme280.get_temperature()
-        temp_readings.append(current_temp)
-        current_humidity = bme280.get_humidity()
-        humidity_readings.append(current_humidity)
-        current_pressure = bme280.get_pressure()
-        pressure_readings.append(current_pressure)
-        current_light = ltr.get_lux()
-        light_readings.append(current_light)
-        sleep(1)
-    avg_temp_reading = sum(temp_readings) / len(temp_readings)
-    converted_temp = ((float(avg_temp_reading) * 9 / 5) + 32)
-    avg_humidity_reading = sum(humidity_readings) / len(humidity_readings)
-    avg_pressure_reading = sum(pressure_readings) / len(pressure_readings)
-    avg_light_reading = sum(light_readings) / len(light_readings)
-    pm_sensor()
-
-    # return avg_temp_reading, converted_temp, avg_humidity_reading, avg_pressure_reading, avg_light_reading
-
-    if file_switch_status == 1:
-        with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
-            writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-            writer.writerow(["New Data: ", time_recording(), current_device_name, avg_temp_reading, converted_temp, avg_humidity_reading,
-                             avg_pressure_reading, avg_light_reading, pm_sensor()])
-            csvfile.close()
-        file_switch_status = 0
-    else:
-        with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
-            writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-            writer.writerow(["New Data: ", time_recording(), current_device_name, avg_temp_reading, converted_temp, avg_humidity_reading,
-                             avg_pressure_reading, avg_light_reading, pm_sensor()])
-            csvfile.close()
-        file_switch_status = 1
-
 def pm_sensor():
     part_mat_readings_raw = pms5003.read()
-    part_mat_readings = str(part_mat_readings_raw)
+    pm_lines = str(part_mat_readings_raw).split('\n')
     pm_readings = []
-    msm_data_lines = part_mat_readings.split('\n')
-    for line in msm_data_lines:
-        parts = line.split(":")
-        if len(parts) > 1:
-            measurement = parts[1].strip()
-            pm_readings.append(measurement)
+    for line in pm_lines:
+        if ":" in line:
+            pm_readings.append(line.split(":")[1].strip())
     return pm_readings
 
-# Data recording
-# def data_write():
-#     with open('wptestfile.csv', 'a', newline='') as csvfile:
-#         writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
-#         writer.writerow(["New Data: ", time_recording(), sens_data(), pm_sensor()])
-#         csvfile.close()
+def sens_data():
+    temp_list, humidity_list, pressure_list, light_list = [], [], [], []
+    time_multiplier = time_interval() * 15
 
+    for _ in range(time_multiplier):
+        temp_list.append(bme280.get_temperature())
+        humidity_list.append(bme280.get_humidity())
+        pressure_list.append(bme280.get_pressure())
+        light_list.append(ltr.get_lux())
+        sleep(1)
+
+    avg_temp_c = sum(temp_list) / len(temp_list)
+    avg_temp_f = (avg_temp_c * 9 / 5) + 32
+    avg_humidity = sum(humidity_list) / len(humidity_list)
+    avg_pressure = sum(pressure_list) / len(pressure_list)
+    avg_light = sum(light_list) / len(light_list)
+    pm_values = pm_sensor()
+
+    return [time_recording(), DEVICE_NAME, avg_temp_c, avg_temp_f,
+            avg_humidity, avg_pressure, avg_light, pm_values]
+
+
+
+# /////////////
+# Data Recording, Output 
+# \\\\\\\\\\\\\
+def write_data(file_num, data):
+    csv_path = DATA_DIR / f"wp_data_{file_num}.csv"
+    with open(csv_path, "a", newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(data)
+
+
+
+# /////////////
+# Acquisition Loop
+# \\\\\\\\\\\\\
 def sensor_acquisition():
+    file_switch = 1
+    last_write_time = None
     while True:
-        # Continuous sensor acquisition
-        current_second = int(strftime(sensor_acq_mode(), localtime()))  # Get the current second
-
-        global last_write_time  # Use the global variable to track the last write time
-
-        # Check if it's time to write data (every 15 seconds) and ensure no repeated writes within the same second
-        if current_second % trigger_interval == 0 and last_write_time != current_second:
-            sensor_readings()
-            last_write_time = current_second
-
-# Debug mode only:
-def sensor_readings():
-    if MODE == 0:
-        sens_data()
-    elif MODE == 1:
-        sens_data()
-        print("Current sensor readings for debugging and testing: ")
-        print("Current temperature, humidity, pressure, light: " + str(sens_data()))
-        # print("Current gas: " + str(gas_readings))
-        print("Current particulates: " + str(pm_sensor()))
-        print("Data written at: " + time_recording())
-
-def dataWriteFile1():
-    with open('/home/' + current_username + '/weatherPi/data/acqtestfile1.csv', 'a') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(["New Data: ", time_recording(), "Test file 1"])
-        csvfile.close()
-
-def dataWriteFile2():
-    with open('/home/' + current_username + '/weatherPi/data/acqtestfile2.csv', 'a') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(["New Data: ", time_recording(), "Test file 2"])
-        csvfile.close()
+        try:
+            current_second = int(strftime("%S" if MODE else "%M", localtime()))
+            if current_second % TRIGGER_INTERVAL == 0 and last_write_time != current_second:
+                data = sens_data()
+                write_data(file_switch, ["New Data:"] + data)
+                log(f"Data written: {data}")
+                file_switch = 1 - file_switch  # alternate files
+                last_write_time = current_second
+        except Exception as e:
+            log("Error: " + str(e))
+            log(traceback.format_exc())
+            sleep(5)  # Prevent crash loop
 
 
-if __name__ == '__main__':
+
+# /////////////
+# Main Entry
+# \\\\\\\\\\\\\
+if __name__ == "__main__":
     initialization()
     sensor_acquisition()
