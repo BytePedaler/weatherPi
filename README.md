@@ -31,7 +31,6 @@ Current terminal initialization procedure:
     sudo systemctl start weatherpi.service
 4. (Optional): Check status of service:
     sudo systemctl status weatherpi.service
-
 5. To enable auto-update from GitHub Repo:
     chmod +x ~/weatherPi/update.sh
 
@@ -52,7 +51,7 @@ Upcoming updates:
 
 
 
-Old version:
+Old version notes:
 Previous terminal initialization procedure:
 1. cd weatherpi/
 2. cd weatherPi/
