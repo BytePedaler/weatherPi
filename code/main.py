@@ -1,8 +1,9 @@
-from time import localtime, strftime, sleep
-import time
+import os
 import csv
 import socket
-import os
+import traceback
+from time import localtime, strftime, sleep
+from pathlib import Path
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
@@ -10,15 +11,33 @@ from ltr559 import LTR559
 from pms5003 import PMS5003
 
 
+# /////////////  
+# Config
+# \\\\\\\\\\\\\
 # Mode selection:
-# Normal = 0, Debug = 1
-MODE = 0
+MODE = 0 # Normal = 0, Debug = 1
+SECONDS_PER_MINUTE = 60
+
+# Detect directories dynamically
+BASE_DIR = path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+LOG_FILE = BASE_DIR / "weatherPi.log"
+DATA_DIR.mkdir(exist_ok=True)
+
+# Get device name for data output
+current_device_name = socket.gethostname()
+
+
+# /////////////  
+# Config, etc (either obsolete or on its way out)
+# \\\\\\\\\\\\\
+# Get user name for data output (this is to ensure the correct filepath for the data saves) -- mostly obsolete
+current_username = os.getlogin()
 
 # Define the interval for triggering data write (e.g., every 15 seconds)
 trigger_interval = 15
 
 # Const variables:
-SECONDS_PER_MINUTE = 60
 temp_readings = []
 pressure_readings = []
 humidity_readings = []
@@ -28,17 +47,16 @@ light_readings = []
 file_switch_status = 1
 last_write_time = None
 
-# Get device name for data output
-current_device_name = socket.gethostname()
-# Get user name for data output (this is to ensure the correct filepath for the data saves)
-current_username = os.getlogin()
 
+# /////////////  
+# Init
+# \\\\\\\\\\\\\
 # Sensor initialization:
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 ltr = LTR559()
 pms5003 = PMS5003()
-# gas_readings = gas.read_all()
+# gas_readings = gas.read_all() # still in testing
 
 # File initialization:
 with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
