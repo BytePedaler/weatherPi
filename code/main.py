@@ -2,6 +2,7 @@ from time import localtime, strftime, sleep
 import time
 import csv
 import socket
+import os
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
@@ -29,6 +30,8 @@ last_write_time = None
 
 # Get device name for data output
 current_device_name = socket.gethostname()
+# Get user name for data output (this is to ensure the correct filepath for the data saves)
+current_username = os.getlogin()
 
 # Sensor initialization:
 bus = SMBus(1)
@@ -38,12 +41,12 @@ pms5003 = PMS5003()
 # gas_readings = gas.read_all()
 
 # File initialization:
-with open('wp_data_1.csv', 'a', newline='') as csvfile:
+with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['system downtime'])
     csvfile.close()
 
-with open('wp_data_2.csv', 'a', newline='') as csvfile:
+with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['system downtime'])
     csvfile.close()
@@ -115,14 +118,14 @@ def sens_data():
     # return avg_temp_reading, converted_temp, avg_humidity_reading, avg_pressure_reading, avg_light_reading
 
     if file_switch_status == 1:
-        with open('wp_data_1.csv', 'a', newline='') as csvfile:
+        with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
             writer.writerow(["New Data: ", time_recording(), current_device_name, avg_temp_reading, converted_temp, avg_humidity_reading,
                              avg_pressure_reading, avg_light_reading, pm_sensor()])
             csvfile.close()
         file_switch_status = 0
     else:
-        with open('wp_data_2.csv', 'a', newline='') as csvfile:
+        with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')
             writer.writerow(["New Data: ", time_recording(), current_device_name, avg_temp_reading, converted_temp, avg_humidity_reading,
                              avg_pressure_reading, avg_light_reading, pm_sensor()])
@@ -173,13 +176,13 @@ def sensor_readings():
         print("Data written at: " + time_recording())
 
 def dataWriteFile1():
-    with open('acqtestfile1.csv', 'a') as csvfile:
+    with open('/home/' + current_username + '/weatherPi/data/acqtestfile1.csv', 'a') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(["New Data: ", time_recording(), "Test file 1"])
         csvfile.close()
 
 def dataWriteFile2():
-    with open('acqtestfile2.csv', 'a') as csvfile:
+    with open('/home/' + current_username + '/weatherPi/data/acqtestfile2.csv', 'a') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(["New Data: ", time_recording(), "Test file 2"])
         csvfile.close()
