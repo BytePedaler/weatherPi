@@ -50,12 +50,12 @@ file_switch_status = 1
 last_write_time = None
 
 # File initialization:
-with open('/home/' + current_username + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
+with open('/home/' + USERNAME + '/weatherPi/data/wp_data_1.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['system downtime'])
     csvfile.close()
 
-with open('/home/' + current_username + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
+with open('/home/' + USERNAME + '/weatherPi/data/wp_data_2.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['system downtime'])
     csvfile.close()
