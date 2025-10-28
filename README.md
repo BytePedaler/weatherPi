@@ -9,36 +9,36 @@ Portland, Oregon area.
 
 Current terminal initialization procedure:
 1. Create systemd service:
-    sudo nano /etc/systemd/system/weatherpi.service
+sudo nano /etc/systemd/system/weatherpi.service
 2. systemd input:
-    [Unit]
-    Description=WeatherPi Sensor Service
-    After=network.target
+[Unit]
+Description=WeatherPi Sensor Service
+After=network.target
 
-    [Service]
-    ExecStart=/usr/bin/python3 /home/[ENTER_USER_NAME]/weatherPi/code/main.py
-    WorkingDirectory=/home/[ENTER_USER_NAME]/weatherPi/code
-    StandardOutput=append:/home/[ENTER_USER_NAME]/weatherPi/log.txt
-    StandardError=append:/home/[ENTER_USER_NAME]/weatherPi/error.txt
-    Restart=always
-    User=[ENTER_USER_NAME]
+[Service]
+ExecStart=/usr/bin/python3 /home/[ENTER_USER_NAME]/weatherPi/code/main.py
+WorkingDirectory=/home/[ENTER_USER_NAME]/weatherPi/code
+StandardOutput=append:/home/[ENTER_USER_NAME]/weatherPi/log.txt
+StandardError=append:/home/[ENTER_USER_NAME]/weatherPi/error.txt
+Restart=always
+User=[ENTER_USER_NAME]
 
-    [Install]
-    WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
 3. Enable the service and start:
-    sudo systemctl daemon-reload
-    sudo systemctl enable weatherpi.service
-    sudo systemctl start weatherpi.service
+sudo systemctl daemon-reload
+sudo systemctl enable weatherpi.service
+sudo systemctl start weatherpi.service
 4. (Optional): Check status of service:
-    sudo systemctl status weatherpi.service
+sudo systemctl status weatherpi.service
 5. To enable auto-update from GitHub Repo:
-    chmod +x ~/weatherPi/update.sh
+chmod +x ~/weatherPi/update.sh
 
-    Then open your crontab:
-        crontab -e
+Then open your crontab:
+crontab -e
 
-    Then add this line:
-        0 * * * * /home/$USER/weatherPi/update.sh
+Then add this line:
+0 * * * * /home/$USER/weatherPi/update.sh
 
 
 
