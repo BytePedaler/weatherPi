@@ -1,7 +1,6 @@
-import os
-import csv
-import socket
-import traceback
+import config
+import init
+
 from time import localtime, strftime, sleep
 from pathlib import Path
 from smbus2 import SMBus
@@ -10,9 +9,7 @@ from ltr559 import LTR559
 # import gas
 from pms5003 import PMS5003
 
-# /////////////
-# Sensor Reading
-# \\\\\\\\\\\\\
+
 # Time recording and collection:
 def time_recording():
     return strftime("%Y, %m, %d; %H:%M:%S", localtime())

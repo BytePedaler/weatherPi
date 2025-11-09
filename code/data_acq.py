@@ -1,18 +1,11 @@
-import os
-import csv
-import socket
+import config
+import sensor_reading
+
 import traceback
 from time import localtime, strftime, sleep
 from pathlib import Path
-from smbus2 import SMBus
-from bme280 import BME280
-from ltr559 import LTR559
-# import gas
-from pms5003 import PMS5003
 
-# /////////////
-# Acquisition Loop
-# \\\\\\\\\\\\\
+
 def sensor_acquisition():
     file_switch = 1
     last_write_time = None
