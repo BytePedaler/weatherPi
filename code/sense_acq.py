@@ -2,6 +2,8 @@ import os
 import csv
 import socket
 import traceback
+import main_config
+import main_init
 from time import localtime, strftime, sleep
 from pathlib import Path
 from smbus2 import SMBus
