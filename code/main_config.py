@@ -1,4 +1,3 @@
-import os # idk yet
 import socket
 from pathlib import Path
 

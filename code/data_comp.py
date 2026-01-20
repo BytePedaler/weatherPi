@@ -1,12 +1,9 @@
-import os
 import csv
-import socket
 import traceback
-import main_config
-import main_init
-import sense_acq
 from time import localtime, strftime, sleep
-from pathlib import Path
+from config import DATA_DIR, MODE, TRIGGER_INTERVAL
+from init import log
+from sense_acq import sens_data
 
 
 # /////////////

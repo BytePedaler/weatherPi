@@ -5,7 +5,6 @@ from init import log
 
 import traceback
 from time import localtime, strftime, sleep
-from pathlib import Path
 
 
 def sensor_acquisition():

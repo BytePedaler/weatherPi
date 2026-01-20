@@ -1,7 +1,5 @@
-import csv
-import socket
-import main_config
 from time import localtime, strftime, sleep
+from config import LOG_FILE, MODE, DEVICE_NAME
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559

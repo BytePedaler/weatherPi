@@ -1,11 +1,5 @@
-import os
-import csv
-import socket
-import traceback
-import main_config
-import main_init
 from time import localtime, strftime, sleep
-from pathlib import Path
+from config import SECONDS_PER_MINUTE, MODE, DEVICE_NAME
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559

@@ -2,7 +2,6 @@ from config import SECONDS_PER_MINUTE, DEVICE_NAME, MODE
 #import init # Testing for obsolete
 
 from time import localtime, strftime, sleep
-from pathlib import Path
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559

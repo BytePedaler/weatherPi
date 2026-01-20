@@ -1,7 +1,5 @@
 from config import DEVICE_NAME, LOG_FILE, MODE
-
-from time import localtime, strftime, sleep
-from pathlib import Path
+from time import strftime
 from smbus2 import SMBus
 from bme280 import BME280
 from ltr559 import LTR559
