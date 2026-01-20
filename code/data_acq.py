@@ -1,5 +1,7 @@
-import config
-import sensor_reading
+from config import TRIGGER_INTERVAL, MODE
+from sensor_reading import sens_data
+from data_recording import write_data
+from init import log
 
 import traceback
 from time import localtime, strftime, sleep

@@ -1,5 +1,5 @@
-import init
-import data_acq
+from init import initialization
+from data_acq import sensor_acquisition
 
 
 # Main Entry

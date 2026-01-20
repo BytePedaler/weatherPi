@@ -1,5 +1,5 @@
-import config
-import init
+from config import SECONDS_PER_MINUTE, DEVICE_NAME, MODE
+#import init # Testing for obsolete
 
 from time import localtime, strftime, sleep
 from pathlib import Path

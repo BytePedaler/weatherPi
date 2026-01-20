@@ -1,5 +1,4 @@
-import config
-
+from config import DATA_DIR
 import csv
 
 

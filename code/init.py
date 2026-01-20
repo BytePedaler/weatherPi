@@ -1,4 +1,4 @@
-import config
+from config import DEVICE_NAME, LOG_FILE, MODE
 
 from time import localtime, strftime, sleep
 from pathlib import Path
